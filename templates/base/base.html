@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cortesías Olmecas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        .sidenav li {
+            margin: 5%;
+            cursor: pointer;
+        }
+
+        .btn {
+            margin: 3px;
+        }
+
+        .selected {
+            font-weight: bold;
+            color: green;
+        }
+
+        .cont-totales {
+            margin-top: 50px;
+        }
+
+        #total_cortesias {
+            font-size: 15vw;
+        }
+    </style>
+</head>
+
+<body>
+    <br><br>
+    <ul id="slide-out" class="sidenav">
+        <li>
+            <div class="event center-align selected card-panel green-text" data-url="{% url 'solicitud:obEvento' 0 %}">
+                Todos</div>
+        </li>
+        <li>
+            <div class="divider"></div>
+        </li>
+        {% for e in eventos %}
+        <li>
+            <div class="event center-align card-panel green-text" data-url="{% url 'solicitud:obEvento' e.id %}">
+                {{e.nombre}}</div>
+        </li>
+        {% endfor %}
+    </ul>
+    <div class="container">
+        {% csrf_token %}
+        <h4 class="center-align green-text">Cortesías Olmecas</h4>
+        <div class="divider"></div>
+        <br>
+        {% block btn_show_eventos %}
+        <button data-target="slide-out" class="sidenav-trigger green btn" title="Ver partidos"><i
+                class="material-icons">remove_red_eye</i></button>
+        {% endblock %}
+        {% block totales %}
+        <div class="row cont-totales">
+            <h1 class="center-align" id="total_cortesias">0</h1>
+            <h6 class="center-align">Cortesías para: <b id="event-name" class="black-text"></b></h6>
+            <h6 class="center-align">Con fecha: <b id="event-datetime" class="black-text"></b></h6>
+        </div>
+        <br><br>
+        <div class="row cont-totales-localidades"></div>
+        {% endblock %}
+    </div>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            $('.sidenav').sidenav()
+            $('div.event').on('click', function () {
+                $(this).addClass('selected').parent().siblings().children('.card-panel').removeClass('selected')
+                getData($(this).attr('data-url'))
+            })
+            $('div.event.selected').click()
+        })
+
+        function getData(dataurl) {
+            $.ajax({
+                method: "POST",
+                url: dataurl,
+                data: { csrfmiddlewaretoken: getCSRFTokenValue() }
+            }).done(function (result) {
+                if (result.status === 'success') {
+                    $('#event-name').html(result.event)
+                    $('#event-datetime').html(result.datetime)
+                    let total = (result.total == null) ? '0' : result.total
+                    $('#total_cortesias').html(total)
+                    $('.cont-totales-localidades').empty()
+                    result.total_by_localities.forEach(element => {
+                        $('.cont-totales-localidades').append('<div class="col l3 m4 s6"><div class="center-align card-panel"><b class="green-text">' + element.localidad__nombre + '</b><h1>' + element.cantidad__sum + '</h1></div></div>')
+                    });
+                    $('.sidenav').sidenav('close');
+                }
+                else if (result.status === 'error') {
+                    alert('Ha ocurrido un error')
+                }
+            }).fail(function () {
+                console.log('Ha ocurrido un error inesperado :(')
+            })
+        }
+
+        function getCSRFTokenValue() {
+            var token = $('input[name="csrfmiddlewaretoken"]').val()
+            return token
+        }
+    </script>
+</body>
+
+</html>
