@@ -31,6 +31,11 @@
         #total_cortesias {
             font-size: 8em;
         }
+
+        img {
+            -webkit-filter: hue-rotate(180deg);
+            filter: hue-rotate(180deg);
+        }
     </style>
 </head>
 
@@ -65,8 +70,14 @@
             <h1 class="center-align" id="total_cortesias">0</h1>
             <h6 class="center-align">Cortesías para: <b id="event-name" class="black-text"></b></h6>
             <h6 class="center-align">Con fecha: <b id="event-datetime" class="black-text"></b></h6>
+            <br>
+            <div>
+                <h1 class="center-align"><span id="total_roll">0</span>&nbsp<img src="../../static/roll.png" alt=""
+                        width="50" height="50"></h1>
+                        <p class="center-align">1 rollo = 350 cortesías aproximadamente</p>
+            </div>
         </div>
-        <br><br>
+        <br>
         <div class="row">
             <div class="col l8 offset-l2 m6 offset-m2 s12 cont-totales-localidades"></div>
         </div>
@@ -96,12 +107,10 @@
                     $('#event-name').html(result.event)
                     $('#event-datetime').html(result.datetime)
                     let total = (result.total == null) ? '0' : result.total
-                    let demo = new CountUp('total_cortesias',0, total, 0, 3.0,);
-                    if(!demo.error) {
-                        demo.start();
-                    } else {
-                        console.error(demo.error);
-                    }
+                    let total_cort = new CountUp('total_cortesias', 0, total, 0, 3.0);
+                    let total_roll = new CountUp('total_roll', 0, getTotalRoll(total), 0, 3.0)
+                    total_cort.start()
+                    total_roll.start()        
                     $('.cont-totales-localidades').empty()
                     result.total_by_localities.forEach(element => {
                         $('.cont-totales-localidades').append('<div class="center-align card-panel"><h5 class="green-text">' + element.localidad__nombre + '</h5><h1>' + element.cantidad__sum + '</h1></div>')
@@ -114,6 +123,10 @@
             }).fail(function () {
                 console.log('Ha ocurrido un error inesperado :(')
             })
+        }
+
+        function getTotalRoll(total){
+            return Math.ceil(total/350)
         }
 
         function getCSRFTokenValue() {
