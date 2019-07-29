@@ -66,7 +66,9 @@
             <h6 class="center-align">Con fecha: <b id="event-datetime" class="black-text"></b></h6>
         </div>
         <br><br>
-        <div class="row cont-totales-localidades"></div>
+        <div class="row">
+            <div class="col l8 offset-l2 m6 offset-m2 s12 cont-totales-localidades"></div>
+        </div>
         {% endblock %}
     </div>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
@@ -95,7 +97,7 @@
                     $('#total_cortesias').html(total)
                     $('.cont-totales-localidades').empty()
                     result.total_by_localities.forEach(element => {
-                        $('.cont-totales-localidades').append('<div class="col l3 m4 s6"><div class="center-align card-panel"><b class="green-text">' + element.localidad__nombre + '</b><h1>' + element.cantidad__sum + '</h1></div></div>')
+                        $('.cont-totales-localidades').append('<div class="center-align card-panel"><h5 class="green-text">' + element.localidad__nombre + '</h5><h1>' + element.cantidad__sum + '</h1></div>')
                     });
                     $('.sidenav').sidenav('close');
                 }
