@@ -29,11 +29,11 @@ class Solicitante(models.Model):
         return self.nombre
 
 class Solicitud(models.Model):
-    evento = models.ForeignKey(Eventos, related_name = 'solicitud', on_delete = models.PROTECT)
+    evento = models.ForeignKey(Eventos, related_name = 'solicitud', on_delete = models.CASCADE)
     localidad = models.ForeignKey(Localidades, related_name = 'localidad', on_delete = models.PROTECT)
     solicitante = models.ForeignKey(Solicitante, related_name = 'solicitante', on_delete = models.PROTECT)
     cantidad = models.IntegerField()
-    extra = models.CharField(max_length = 200, default = None)
+    extra = models.CharField(max_length = 200, null = True, blank = True)
     class Meta:
         verbose_name = "Solicitud"
         verbose_name_plural = "Solicitudes"
