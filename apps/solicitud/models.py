@@ -33,6 +33,7 @@ class Solicitud(models.Model):
     localidad = models.ForeignKey(Localidades, related_name = 'localidad', on_delete = models.PROTECT)
     solicitante = models.ForeignKey(Solicitante, related_name = 'solicitante', on_delete = models.PROTECT)
     cantidad = models.IntegerField()
+    fecha = models.DateTimeField(auto_now = True)
     extra = models.CharField(max_length = 200, null = True, blank = True)
     class Meta:
         verbose_name = "Solicitud"
